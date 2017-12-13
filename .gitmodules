@@ -13,3 +13,6 @@
 [submodule "bpp/bpp-seq"]
 	path = bpp/bpp-seq
 	url = https://github.com/BioPP/bpp-seq.git
+[submodule "boost"]
+	path = boost
+	url = https://github.com/boostorg/boost.git
