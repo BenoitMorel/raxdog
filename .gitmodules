@@ -1,18 +1,24 @@
 [submodule "raxml-ng"]
 	path = raxml-ng
 	url = git@github.com:amkozlov/raxml-ng.git
+  ignore = dirty
 [submodule "PHYLDOG"]
 	path = PHYLDOG
 	url = git@github.com:BenoitMorel/PHYLDOG.git
+  ignore = dirty
 [submodule "bpp/bpp-phyl"]
 	path = bpp/bpp-phyl
 	url = https://github.com/BioPP/bpp-phyl.git
+  ignore = dirty
 [submodule "bpp/bpp-core"]
 	path = bpp/bpp-core
 	url = https://github.com/BioPP/bpp-core.git
+  ignore = dirty
 [submodule "bpp/bpp-seq"]
 	path = bpp/bpp-seq
 	url = https://github.com/BioPP/bpp-seq.git
+  ignore = dirty
 [submodule "boost"]
 	path = boost
+  ignore = dirty
 	url = https://github.com/boostorg/boost.git
