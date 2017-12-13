@@ -1,0 +1,6 @@
+[submodule "raxml-ng"]
+	path = raxml-ng
+	url = git@github.com:amkozlov/raxml-ng.git
+[submodule "PHYLDOG"]
+	path = PHYLDOG
+	url = git@github.com:BenoitMorel/PHYLDOG.git
