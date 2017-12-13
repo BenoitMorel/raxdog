@@ -4,3 +4,12 @@
 [submodule "PHYLDOG"]
 	path = PHYLDOG
 	url = git@github.com:BenoitMorel/PHYLDOG.git
+[submodule "bpp/bpp-phyl"]
+	path = bpp/bpp-phyl
+	url = https://github.com/BioPP/bpp-phyl.git
+[submodule "bpp/bpp-core"]
+	path = bpp/bpp-core
+	url = https://github.com/BioPP/bpp-core.git
+[submodule "bpp/bpp-seq"]
+	path = bpp/bpp-seq
+	url = https://github.com/BioPP/bpp-seq.git
