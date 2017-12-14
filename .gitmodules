@@ -22,3 +22,7 @@
 	path = boost
   ignore = dirty
 	url = https://github.com/boostorg/boost.git
+[submodule "phylogenetic-likelihood-library"]
+	path = phylogenetic-likelihood-library
+  ignore = dirty
+	url = git://git.assembla.com/phylogenetic-likelihood-library.git
