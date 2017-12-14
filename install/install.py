@@ -33,7 +33,7 @@ def build_boost():
   #todobenoit: this is not portable
   subprocess.check_call(["./bootstrap.sh"])
   subprocess.check_call(["./b2", "headers", "--with-mpi", "--with-serialization", "--with-graph"])
-  with open(os.path.join(BOOST_PATH, "project-config.jam"), "a") as jam:
+  with open(os.path.join(const.BOOST_PATH, "project-config.jam"), "a") as jam:
     jam.write("using mpi ;\n")
   subprocess.check_call(["./b2", "--with-mpi", "--with-serialization", "--with-graph"])
 
@@ -108,5 +108,5 @@ copy_deps()
 build_phyldog()
 
 elapsed = time.time() - start_time
-print("END OF THE INSTALLATION. ELAPSED TIME: " + str(elapsed) seconds)
+print("END OF THE INSTALLATION. ELAPSED TIME: " + str(elapsed) + "seconds")
 
