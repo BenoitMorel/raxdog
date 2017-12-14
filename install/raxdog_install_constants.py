@@ -2,9 +2,11 @@ import os
 
 RAXDOG_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 RAXML_PATH= os.path.join(RAXDOG_ROOT, "raxml-ng")
+PHYLDOG_PATH= os.path.join(RAXDOG_ROOT, "PHYLDOG")
 PLLMODULES_PATH= os.path.join(RAXML_PATH, "libs", "pll-modules")
 LIBPLL2_PATH= os.path.join(PLLMODULES_PATH, "libs", "libpll")
 BOOST_PATH= os.path.join(RAXDOG_ROOT, "boost")
+BOOST_LIB_PATH= os.path.join(BOOST_PATH, "stage", "lib")
 BPP_PATH= os.path.join(RAXDOG_ROOT, "bpp")
 PLL_PATH= os.path.join(RAXDOG_ROOT, "phylogenetic-likelihood-library")
 
