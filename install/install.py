@@ -47,6 +47,17 @@ def build_bpp(package):
   subprocess.check_call(["make"])
   subprocess.check_call(["make", "install"])
 
+def build_pll():
+  os.chdir(const.PLL_PATH)
+  subprocess.check_call("autoconf")
+  try:
+    subprocess.check_call("./configure")
+  except Exception:
+    subprocess.check_call("autoreconf --install")
+    subprocess.check_call("./configure")
+    pass
+  subprocess.check_call("make")
+
 def copyFilesFromPattern(pattern, destDir):
   for f in glob.glob(pattern):
     shutil.copyfile(f, os.path.join(destDir, os.path.basename(f)))
@@ -76,6 +87,7 @@ def copy_deps():
 #build_bpp("core")
 #build_bpp("seq")
 #build_bpp("phyl")
-copy_deps()
+build_pll()
+#copy_deps()
 
 #

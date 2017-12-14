@@ -6,6 +6,7 @@ PLLMODULES_PATH= os.path.join(RAXML_PATH, "libs", "pll-modules")
 LIBPLL2_PATH= os.path.join(PLLMODULES_PATH, "libs", "libpll")
 BOOST_PATH= os.path.join(RAXDOG_ROOT, "boost")
 BPP_PATH= os.path.join(RAXDOG_ROOT, "bpp")
+PLL_PATH= os.path.join(RAXDOG_ROOT, "phylogenetic-likelihood-library")
 
 BPP_INSTALL_PATH = os.path.join(BPP_PATH, "bppinstall")
 
