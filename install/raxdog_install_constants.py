@@ -13,11 +13,13 @@ BPP_INSTALL_PATH = os.path.join(BPP_PATH, "bppinstall")
 BPP_INSTALL_INCLUDE_PATH = os.path.join(BPP_INSTALL_PATH, "include", "Bpp")
 PLLMODULES_SRC_PATH = os.path.join(PLLMODULES_PATH, "src")
 LIBPLL2_SRC_PATH = os.path.join(LIBPLL2_PATH, "src")
+PLL_SRC_PATH = os.path.join(PLL_PATH, "src")
 
 DEPS_PATH = os.path.join(RAXDOG_ROOT, "deps")
 DEPS_LIB_PATH = os.path.join(DEPS_PATH, "lib")
 DEPS_INCLUDE_PATH = os.path.join(DEPS_PATH, "include")
 DEPS_INCLUDE_BPP_PATH = os.path.join(DEPS_INCLUDE_PATH, "Bpp")
 DEPS_INCLUDE_PLLMODULES_PATH = os.path.join(DEPS_INCLUDE_PATH, "pllmodules")
+DEPS_INCLUDE_PLL_PATH = os.path.join(DEPS_INCLUDE_PATH, "pll")
 
 

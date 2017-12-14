@@ -69,25 +69,31 @@ def copy_deps():
   os.mkdir(const.DEPS_LIB_PATH)
   os.mkdir(const.DEPS_INCLUDE_PATH)
   os.mkdir(const.DEPS_INCLUDE_PLLMODULES_PATH)
+  os.mkdir(const.DEPS_INCLUDE_PLL_PATH)
   
   # bpp headers and libraries
   shutil.copytree(const.BPP_INSTALL_INCLUDE_PATH, const.DEPS_INCLUDE_BPP_PATH)
-  copyFilesFromPattern( os.path.join(const.BPP_INSTALL_PATH, "lib64", "*.so*"), const.const.DEPS_LIB_PATH)
+  copyFilesFromPattern( os.path.join(const.BPP_INSTALL_PATH, "lib64", "*.so*"), const.DEPS_LIB_PATH)
   
   # libpll2 headers and libraries
   copyFilesFromPattern(os.path.join(const.LIBPLL2_SRC_PATH, "*.h"), const.DEPS_INCLUDE_PLLMODULES_PATH)
   copyFilesFromPattern(os.path.join(const.LIBPLL2_SRC_PATH, ".libs", "*.so*" ), const.DEPS_LIB_PATH)
 
-  # pllmodulesheaders and libraries
+  # pllmodules headers and libraries
   copyFilesFromPattern(os.path.join(const.PLLMODULES_SRC_PATH, "*", "*.h"), const.DEPS_INCLUDE_PLLMODULES_PATH)
   copyFilesFromPattern(os.path.join(const.PLLMODULES_SRC_PATH, "*", ".libs", "*.so*" ), const.DEPS_LIB_PATH)
+
+  # old pll headers and libraries
+  copyFilesFromPattern(os.path.join(const.PLL_SRC_PATH, "*.h" ), const.DEPS_INCLUDE_PLL_PATH)
+  copyFilesFromPattern(os.path.join(const.PLL_SRC_PATH, ".libs", "*.so*" ), const.DEPS_LIB_PATH)
+  
 
 #build_raxml()
 #build_boost()
 #build_bpp("core")
 #build_bpp("seq")
 #build_bpp("phyl")
-build_pll()
-#copy_deps()
+#build_pll()
+copy_deps()
 
 #
