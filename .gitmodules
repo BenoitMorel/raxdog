@@ -1,9 +1,9 @@
 [submodule "raxml-ng"]
-	path = raxml-ng
+	path = thirdlib/raxml-ng
 	url = git@github.com:amkozlov/raxml-ng.git
   ignore = dirty
 [submodule "PHYLDOG"]
-	path = PHYLDOG
+	path = thirdlib/PHYLDOG
 	url = git@github.com:BenoitMorel/PHYLDOG.git
   ignore = dirty
 [submodule "bpp/bpp-phyl"]
@@ -19,10 +19,10 @@
 	url = https://github.com/BioPP/bpp-seq.git
   ignore = dirty
 [submodule "boost"]
-	path = boost
+	path = thirdlib/boost
   ignore = dirty
 	url = https://github.com/boostorg/boost.git
 [submodule "phylogenetic-likelihood-library"]
-	path = phylogenetic-likelihood-library
+	path = thirdlib/phylogenetic-likelihood-library
   ignore = dirty
 	url = git://git.assembla.com/phylogenetic-likelihood-library.git
