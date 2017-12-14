@@ -7,15 +7,15 @@
 	url = git@github.com:BenoitMorel/PHYLDOG.git
   ignore = dirty
 [submodule "bpp/bpp-phyl"]
-	path = bpp/bpp-phyl
+	path = thirdlib/bpp/bpp-phyl
 	url = https://github.com/BioPP/bpp-phyl.git
   ignore = dirty
 [submodule "bpp/bpp-core"]
-	path = bpp/bpp-core
+	path = thirdlib/bpp/bpp-core
 	url = https://github.com/BioPP/bpp-core.git
   ignore = dirty
 [submodule "bpp/bpp-seq"]
-	path = bpp/bpp-seq
+	path = thirdlib/bpp/bpp-seq
 	url = https://github.com/BioPP/bpp-seq.git
   ignore = dirty
 [submodule "boost"]
