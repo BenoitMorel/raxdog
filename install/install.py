@@ -32,12 +32,18 @@ def build_boost():
   os.chdir(const.BOOST_PATH)
   #todobenoit: this is not portable
   subprocess.check_call(["./bootstrap.sh"])
-  subprocess.check_call(["./b2", "headers", "--with-mpi", "--with-serialization", "--with-graph"])
+  print("TDO INVERSE ORDER !! and try with header in custom boost install")
   with open(os.path.join(const.BOOST_PATH, "project-config.jam"), "a") as jam:
     jam.write("using mpi ;\n")
-  subprocess.check_call(["./b2", "--with-mpi", "--with-serialization", "--with-graph"])
+  try:
+    subprocess.check_call(["./b2", "headers", "--with-graph", "--with-serialization", "--with-mpi"])
+    subprocess.check_call(["./b2", "--with-graph", "--with-serialization", "--with-mpi"])
+  except Exception:
+    pass
+  print("todobenoit: add a check that the lib exists")
 
 def build_bpp(package):
+  print("Building bpp-" + package + "...")
   os.chdir(os.path.join(const.BPP_PATH, "bpp-" + package))
   mkdirnocheck("build")
   os.chdir("build")
@@ -47,11 +53,11 @@ def build_bpp(package):
 
 def build_pll():
   os.chdir(const.PLL_PATH)
-  subprocess.check_call("autoconf")
   try:
+    subprocess.check_call("autoconf")
     subprocess.check_call("./configure")
-  except Exception:
-    subprocess.check_call("autoreconf --install")
+  except:
+    subprocess.check_call(["autoreconf", "--install"])
     subprocess.check_call("./configure")
     pass
   subprocess.check_call("make")
@@ -83,6 +89,7 @@ def copy_deps():
   copyFilesFromPattern(os.path.join(const.PLL_SRC_PATH, ".libs", "*.so*" ), const.DEPS_LIB_PATH)
   
 def build_phyldog():
+  print("build phyldog")
   os.chdir(const.PHYLDOG_PATH)
   mkdirnocheck("build")
   os.chdir(os.path.join(const.PHYLDOG_PATH, "build"))
@@ -90,21 +97,23 @@ def build_phyldog():
   dcmakeInclude = '-DCMAKE_INCLUDE_PATH=' + const.DEPS_INCLUDE_PATH + "/" 
   dboostLibrary = '-DBOOST_LIBRARYDIR=' + const.BOOST_LIB_PATH + "/"
   dboostRoot = '-DBOOST_ROOT=' + const.BOOST_PATH + "/"
-  dcompiler = '-DCMAKE_CXX_STANDARD = 11'
-  cmakeCommand = ['cmake', '..', dcmakeLib, dcmakeInclude, dboostLibrary, dboostRoot]
+  dcompiler = '-DCMAKE_CXX_STANDARD=11'
+  cmakeCommand = ['cmake', '..', dcmakeLib, dcmakeInclude, dboostLibrary, dboostRoot, dcompiler]
+  print("cmake commaaaaaaaaaaaaaand")
+  print(cmakeCommand)
   subprocess.check_call(cmakeCommand)
-  subprocess.check_call("make")
+  subprocess.check_call(["make", "VERBOSE=1"])
 
 
 start_time = time.time()
 
 build_raxml()
-build_boost()
-build_bpp("core")
-build_bpp("seq")
-build_bpp("phyl")
-build_pll()
-copy_deps()
+#build_boost()
+#build_bpp("core")
+#build_bpp("seq")
+#build_bpp("phyl")
+#build_pll()
+#copy_deps()
 build_phyldog()
 
 elapsed = time.time() - start_time
