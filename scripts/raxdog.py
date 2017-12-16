@@ -1,6 +1,6 @@
 import sys;
 import os;
-
+import raxmlCommand;
 
 def duplicateOptionFiles(optionsPath, duplicateOptionsPath):
     """
@@ -13,22 +13,15 @@ def duplicateOptionFiles(optionsPath, duplicateOptionsPath):
     print("TO IMPLEMENT")
     return "notimplemented"
 
-def buildRaxmlCommand(optionsFile):
-    """ 
-    Read a phyldog gene option file
-    and build a raxml command
-    """
-    return []
-    
 def buildRaxmlCommands(optionsPath):
     """
-    Call buildRaxmlCommand on each file in optionsPath
+    Parse all the gene options files in optionsPath
     and return a list of raxml commands to execute
     """
     commands = []
     for optionsFile in os.listdir(optionsPath):
         f = os.path.join(optionsPath, optionsFile)
-        commands.append(buildRaxmlCommand(f))
+        commands.append(raxmlCommand.RaxmlCommand(f))
     return commands
 
 def runRaxmlCommands(commands, threadsNumber):
