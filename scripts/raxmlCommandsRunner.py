@@ -2,7 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 import time
 import sys
-
+import raxmlCommand
 
 class Notifier:
     _raxmlCommandsRunner = 0
@@ -14,25 +14,6 @@ class Notifier:
     def notify(self, future):
         self._raxmlCommandsRunner.jobEnded(self._job)
 
-class Job:
-    _threads = 1
-    _executionTime = 0
-
-    def __init__(self, executionTime, threads):
-        self._threads = threads
-        self._executionTime = executionTime
-
-    def getThreads(self):
-        return self._threads
-
-    def getExecutionTime(self):
-        return self._executionTime
-
-    def execute(self):
-        executor = ThreadPoolExecutor(self._threads)
-        for i in range(0, self._threads):
-            executor.submit(time.sleep, self._executionTime / self._threads)
-        executor.shutdown()
 
 class RaxmlCommandsRunner:
     _totalAvailableThreads = 1
@@ -82,7 +63,10 @@ class RaxmlCommandsRunner:
 
 
     def run(self):
+        self._jobs.sort(key=raxmlCommand.commandKey, reverse=True)
         self.runAllPossibleJobs()
+        while(not self.allJobsEnded()):
+            time.sleep(0.05)
 
     def allJobsEnded(self):
         if (self.hasNextJob()):
@@ -92,11 +76,9 @@ class RaxmlCommandsRunner:
                 return False
         return True
 
-runner = RaxmlCommandsRunner(4)
-runner.addJob(Job(8, 4)) # 2 sec on 4 threads
-runner.addJob(Job(8, 2)) # 4 sec on 2 threads
-runner.addJob(Job(16, 2)) # 8 sec on 2 threads
-runner.run() #should last 10 sec
-while(not runner.allJobsEnded()):
-    time.sleep(0.05)
+#runner = RaxmlCommandsRunner(4)
+#runner.addJob(Job(8, 4)) # 2 sec on 4 threads
+#runner.addJob(Job(8, 2)) # 4 sec on 2 threads
+#runner.addJob(Job(16, 2)) # 8 sec on 2 threads
+#runner.run() #should last 10 sec
 
