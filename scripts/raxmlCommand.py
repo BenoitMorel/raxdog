@@ -1,24 +1,11 @@
 import raxdogconstants as const; 
 import os;
 import subprocess;
+import phyldogOptions as opt
 
 def commandKey(command):
     # todobenoit 10,000,000 does not work anymore with too many sites
     return command.getThreads() * 10000000 + command.getExecutionTime() 
-
-def containsRaxml(optionFile):
-    result = False
-    with open(optionFile) as f:
-        for line in f:
-            if line.startswith(const.PREPROC_TREE_MODE):
-                print(line.split("=")[1])
-                if line.split("=")[1][:-1] == const.RAXML_PREPROC_TREE_MODE:
-                    print("Raxml mode !!")
-                    result = True
-                else:
-                    print("NO RAXML MODE")
-                    result = False
-    return result
 
 class RaxmlCommand:
     msaFile = "" # path to the msa
@@ -34,7 +21,7 @@ class RaxmlCommand:
                 if line.startswith(">") and sites != 0:
                     return sites
                 sites += (len(line.replace(" ", "")) - 1)
-        return 0
+        return sites
 
     def initFromOptionFile(self, optionFile, outputTreesPath):
         """
@@ -44,14 +31,15 @@ class RaxmlCommand:
         """
         self.model = "GTR"
         print("init from option file " + optionFile)
+        self.msaFile = opt.get(optionFile, "input.sequence", "") 
         with open(optionFile) as f:
             for line in f.readlines():
                 if line.startswith("input.sequence"):
                     self.msaFile = line.split("=")[1][:-1]
                     break
         self.sites = self._parseNumberOfSites(self.msaFile)
-        opt = (self.sites + 999) // 1000
-        self.optimalThreadsNumber = 2 **(opt.bit_length() - 1)
+        optim = (self.sites + 999) // 1000
+        self.optimalThreadsNumber = 2 **(optim.bit_length() - 1)
         print("sites : " + str(self.sites))
         print("opt : " + str(self.optimalThreadsNumber))
         self.prefix = os.path.basename(self.msaFile)
