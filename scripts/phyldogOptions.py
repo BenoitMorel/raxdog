@@ -1,4 +1,5 @@
 import re
+import os
 
 def replaceLinesStartingWith(inputFile, start, newLine):
   with open(inputFile) as readFile:
@@ -28,7 +29,7 @@ def get(optionFile, optionName, defaultValue):
     print("get " + res)
     return res
 
-def computeOptionsDico(optionFile):
+def parseDico(optionFile):
     dico = {}
     lines = []
     with open(optionFile) as f:
@@ -37,88 +38,36 @@ def computeOptionsDico(optionFile):
         if line.startswith("#"):
             continue
         split = line.split("=")
-        if (len(split) == 2):
-            value = split[1][:-1]
-            while True:
-                match = re.search(r'\$\(([^\)]*)\)', value)
-                if(match):
-                    toReplace = "$(" + match.group(1) + ")"
-                    value = value.replace(toReplace, dico[match.group(1)]) 
-                else:
-                    break
-            dico[split[0]] = value
+        if (len(split) != 2):
+            continue
+        value = split[1][:-1]
+        pattern = r'\$\(([^\)]*)\)'
+        match = re.search(pattern, value)
+        while match:
+            toReplace = "$(" + match.group(1) + ")"
+            value = value.replace(toReplace, dico[match.group(1)]) 
+            match = re.search(pattern, value)
+        dico[split[0]] = value
     return dico
 
-dico = computeOptionsDico("/home/benoit/github/raxdog/data/DataExampleSmall/OptionFiles/HBG011000.opt")
 
-for key in dico.keys():
-    print(key + ":" + dico[key])
+class PhyldogOptions:
+    dicts = {} # dict of dict. 
+    generalDict = {} # dict
+    
+    def __init__(self, generalOptionsFile):
+        self.generalDict = parseDico(generalOptionsFile)
+        optionsPath = self.generalDict["OPT"]
+        for optionFile in os.listdir(optionsPath):
+            fullPath = os.path.join(optionsPath, optionFile)
+            self.dicts[fullPath] = parseDico(fullPath)
 
+    def getGeneralDict(self):
+        return self.generalDict
 
-def preparePhydlogFiles(dataPath, outputPath, seed, speciesNumber, genesNumber, method, startingTrees):
-  """ 
-  Create a new directory, extract and modify an original dataset to this directory, and return the directory name
-  prefix and suffix are appended at the begining and the end of the new directory name
-  """
+    def getGeneDict(self, optionsFile):
+        return self.dicts[optionsFile]
 
-  if (startingTrees == "bionj"):
-    useBestTrees = False
-  elif (startingTrees == "raxmlStart"):
-    useBestTrees = True
-    geneTreeSuffix = ".raxml.startTree"
-  elif (startingTrees == "raxmlParsi"):
-    useBestTrees = True
-    geneTreeSuffix = ".raxml.parsiTree"
-  elif (startingTrees == "raxmlBest"):
-    useBestTrees = True
-    geneTreeSuffix = ".raxml.bestTree"
-  else:
-    raise Exception('Invalid startingTrees mode')
-  # get paths
-  path = os.path.dirname(os.path.realpath(__file__))
-  phyldogDir = os.path.dirname(path)
-  outputDir = prefix + "_" + dataset + "_" + seed + "_" + speciesNumber + "_" + genesNumber + "_" + method + "_" + startingTrees + suffix
-  outputDir = os.path.join(path, outputDir)
-  originDataDir = os.path.join(phyldogDir, "benoitdata", dataset)
-  originOptionsDir = os.path.join(originDataDir, "OptionFiles")
-  newDataDir = os.path.join(outputDir, dataset)
-  newOptionsDir = os.path.join(newDataDir, "OptionFiles")
-  newGeneralOptionsFile = os.path.join(newOptionsDir, "GeneralOptions.txt")
-  geneTreesDir = os.path.join(originDataDir, "RaxmlTrees")
-  resultsDir = os.path.join(outputDir, "results")
-  # create directories
-  shutil.rmtree(outputDir, True)
-  os.mkdir(outputDir)
-  os.mkdir(newDataDir)
-  os.mkdir(resultsDir)
-  # build the options files
-  shutil.copytree(originOptionsDir, newOptionsDir)
-  resizeFile(os.path.join(newOptionsDir, "listSpecies.txt"), int(speciesNumber))
-  resizeFile(os.path.join(newOptionsDir, "listGenes.txt"), int(genesNumber))
-  fixListGenes(os.path.join(newOptionsDir, "listGenes.txt"), newOptionsDir)
-  replaceLinesStartingWith(newGeneralOptionsFile, "RESULT=", "RESULT=" + outputDir + "/") 
-  replaceLinesStartingWith(newGeneralOptionsFile, "OPT=", "OPT=" + newOptionsDir + "/") 
-  with open(newGeneralOptionsFile, "a") as w:
-    w.write("rearrangement.gene.tree=spr\n")
-    w.write("reset.gene.trees=no\n")
-    w.write("likelihood.evaluator=" + method + "\n")
-    w.write("seed=" + seed + "\n")
-  # build per gene files
-  if (useBestTrees):
-    notFoundCount = 0
-    optionsFilenames = (opt for opt in os.listdir(newOptionsDir) if opt.endswith(".opt"))
-    for opt in optionsFilenames:
-      geneName = os.path.splitext(opt)[0]
-      optFile = os.path.join(newOptionsDir, opt)
-      geneTreeFile = os.path.join(geneTreesDir, geneName + geneTreeSuffix)
-      replaceLinesStartingWith(optFile, "RESULT=", "RESULT=" + resultsDir + "/")
-      if os.path.isfile(geneTreeFile):
-        replaceLinesStartingWith(optFile, "init.gene.tree=bionj", "init.gene.tree=user")
-        replaceLinesStartingWith(optFile, "gene.tree.file=", "gene.tree.file=" + geneTreeFile)
-      else:
-        print("Warning: " + geneTreeFile + " not found")
-        notFoundCount += 1
-    if notFoundCount > 0:
-      print("Failed to find " + str(notFoundCount) + " genes trees files. Bionj trees will be generated instead") 
-  return outputDir
+    def getGeneDicts(self):
+        return self.dicts
 

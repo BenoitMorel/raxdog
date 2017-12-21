@@ -23,20 +23,15 @@ class RaxmlCommand:
                 sites += (len(line.replace(" ", "")) - 1)
         return sites
 
-    def initFromOptionFile(self, optionFile, outputTreesPath):
+    def initFromOptionFile(self, geneDict, outputTreesPath):
         """
         Load all parameters from an optionFile
         (optionFile is a string)
         todobenoit: outputTreesPath should be read from optionFile somehow
         """
         self.model = "GTR"
-        print("init from option file " + optionFile)
-        self.msaFile = opt.get(optionFile, "input.sequence", "") 
-        with open(optionFile) as f:
-            for line in f.readlines():
-                if line.startswith("input.sequence"):
-                    self.msaFile = line.split("=")[1][:-1]
-                    break
+        print(geneDict)
+        self.msaFile = geneDict["input.sequence.file"]
         self.sites = self._parseNumberOfSites(self.msaFile)
         optim = (self.sites + 999) // 1000
         self.optimalThreadsNumber = 2 **(optim.bit_length() - 1)
