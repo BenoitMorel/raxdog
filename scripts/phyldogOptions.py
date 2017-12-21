@@ -26,7 +26,6 @@ def get(optionFile, optionName, defaultValue):
         for line in f:
             if line.startswith(optionName):
                 res = line.split("=")[1][:-1]
-    print("get " + res)
     return res
 
 def parseDico(optionFile):

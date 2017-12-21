@@ -4,7 +4,7 @@ import subprocess;
 import phyldogOptions as opt
 
 def commandKey(command):
-    # todobenoit 10,000,000 does not work anymore with too many sites
+    print("WARNING : dangerous magic number here (todobenoit)")
     return command.getThreads() * 10000000 + command.getExecutionTime() 
 
 class RaxmlCommand:
@@ -14,14 +14,16 @@ class RaxmlCommand:
     sites = 0
     optimalThreadsNumber = 1
 
-    def _parseNumberOfSites(self, fastaFile):
-        sites = 0
+    def _parseFastaDimensions(self, fastaFile):
+        self.sites = 0
+        self.nodes = 0
         with open(fastaFile) as f:
             for line in f:
-                if line.startswith(">") and sites != 0:
-                    return sites
-                sites += (len(line.replace(" ", "")) - 1)
-        return sites
+                if line.startswith(">"):
+                    self.nodes += 1
+                else:
+                    self.sites += (len(line.replace(" ", "")) - 1)
+        self.sites //= self.nodes
 
     def initFromOptionFile(self, geneDict, outputTreesPath):
         """
@@ -30,13 +32,11 @@ class RaxmlCommand:
         todobenoit: outputTreesPath should be read from optionFile somehow
         """
         self.model = "GTR"
-        print(geneDict)
         self.msaFile = geneDict["input.sequence.file"]
-        self.sites = self._parseNumberOfSites(self.msaFile)
+        self._parseFastaDimensions(self.msaFile)
+        print("Sites : " + str(self.sites))
         optim = (self.sites + 999) // 1000
         self.optimalThreadsNumber = 2 **(optim.bit_length() - 1)
-        print("sites : " + str(self.sites))
-        print("opt : " + str(self.optimalThreadsNumber))
         self.prefix = os.path.basename(self.msaFile)
         self.prefix = os.path.splitext(self.prefix)[0]
         self.prefix = os.path.join(outputTreesPath, self.prefix)
@@ -62,7 +62,7 @@ class RaxmlCommand:
         return self.optimalThreadsNumber
 
     def getExecutionTime(self):
-        return self.sites
+        return self.sites * self.nodes
 
 class DebugCommand:
     _threads = 1
