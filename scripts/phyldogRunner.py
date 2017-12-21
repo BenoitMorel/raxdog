@@ -11,7 +11,7 @@ def runPhyldog(generalOptionsFile, threadsNumber):
     command.append("mpirun")
     command.append("-np")
     command.append(str(threadsNumber))
-    command.append(const.PHYLDOG_PATH)
+    command.append(const.PHYLDOG_EXEC)
     command.append("param=" + generalOptionsFile)
     subprocess.check_call(command)
 

@@ -15,9 +15,10 @@ def buildRaxmlCommands(optionsPath, outputTreesPath):
     for optionsFile in os.listdir(optionsPath):
         if optionsFile.endswith(".opt"):
             f = os.path.join(optionsPath, optionsFile)
-            command = raxmlCommand.RaxmlCommand()
-            command.initFromOptionFile(f, outputTreesPath)
-            commands.append(command)
+            if raxmlCommand.containsRaxml(f):
+                command = raxmlCommand.RaxmlCommand()
+                command.initFromOptionFile(f, outputTreesPath)
+                commands.append(command)
     return commands
 
 def runRaxmlCommands(commands, threadsNumber):
@@ -35,15 +36,18 @@ def raxdog(optionsPath, outputPath, threadsNumber):
     """
     Whole raxdog pipeline
     """
-    dirutils.makedirsnocheck(outputPath)
+    os.makedirs(outputPath)
     outputTreesPath = os.path.join(outputPath, "RaxmlTrees")
-    dirutils.mkdirnocheck(outputTreesPath)
+    os.makedirs(outputTreesPath)
+    generalOptionsFile = os.path.join(optionsPath, "GeneralOptions.txt")
+    phyldogOutputPath = os.path.join(outputPath, "phyldogOutputs")
+    os.makedirs(phyldogOutputPath)
     # build raxml commands
     raxmlCommands = buildRaxmlCommands(optionsPath, outputTreesPath)
     # execute raxml commands
-    print("HEY " + raxmlCommands[0].msaFile)
     runRaxmlCommands(raxmlCommands, threadsNumber)
     # execute phyldog
+    os.chdir(phyldogOutputPath)
     phyldogRunner.runPhyldog(generalOptionsFile, threadsNumber)
 
 

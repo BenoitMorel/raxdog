@@ -6,6 +6,20 @@ def commandKey(command):
     # todobenoit 10,000,000 does not work anymore with too many sites
     return command.getThreads() * 10000000 + command.getExecutionTime() 
 
+def containsRaxml(optionFile):
+    result = False
+    with open(optionFile) as f:
+        for line in f:
+            if line.startswith(const.PREPROC_TREE_MODE):
+                print(line.split("=")[1])
+                if line.split("=")[1][:-1] == const.RAXML_PREPROC_TREE_MODE:
+                    print("Raxml mode !!")
+                    result = True
+                else:
+                    print("NO RAXML MODE")
+                    result = False
+    return result
+
 class RaxmlCommand:
     msaFile = "" # path to the msa
     model = ""   # substitution model
