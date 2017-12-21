@@ -1,18 +1,10 @@
 import sys
 import os
 import raxmlCommand
-import raxmlCommandsRunner as runner
-
-def duplicateOptionFiles(optionsPath, duplicateOptionsPath):
-    """
-    Copy the option files that need to be edited
-    Update the paths accordingly.
-    The GeneralOptions.txt and other directories
-    are created in duplicateOptionsPath
-    Returns the full path to the new GeneralOptions.txt
-    """
-    print("TO IMPLEMENT")
-    return "notimplemented"
+import raxmlCommandsRunner as raxmlRunner
+import phyldogRunner
+import dirutils
+import shutil
 
 def buildRaxmlCommands(optionsPath, outputTreesPath):
     """
@@ -32,36 +24,26 @@ def runRaxmlCommands(commands, threadsNumber):
     """
     Run concurrently one raxml instance per command
     """
-    r = runner.RaxmlCommandsRunner(threadsNumber)
+    r = raxmlRunner.RaxmlCommandsRunner(threadsNumber)
     for command in commands:
         r.addJob(command)
         print("r.addJob " + str(command.getThreads()))
         #command.execute(threadsNumber)
     r.run()
 
-def runPhyldog(generalOptionsFile, threadsNumber):
-    """
-    Run phyldog on generalOptionsFile with threadsNumber
-    threads
-    """
-    print("TO IMPLEMENT")
-
-
 def raxdog(optionsPath, outputPath, threadsNumber):
     """
     Whole raxdog pipeline
     """
-    os.makedirs(outputPath)
+    dirutils.makedirsnocheck(outputPath)
     outputTreesPath = os.path.join(outputPath, "RaxmlTrees")
-    os.mkdir(outputTreesPath)
-    # copy all necessary files
-    generalOptionsFile = duplicateOptionFiles(optionsPath, outputPath)
+    dirutils.mkdirnocheck(outputTreesPath)
     # build raxml commands
     raxmlCommands = buildRaxmlCommands(optionsPath, outputTreesPath)
     # execute raxml commands
     print("HEY " + raxmlCommands[0].msaFile)
     runRaxmlCommands(raxmlCommands, threadsNumber)
     # execute phyldog
-    runPhyldog(generalOptionsFile, threadsNumber)
+    phyldogRunner.runPhyldog(generalOptionsFile, threadsNumber)
 
 
