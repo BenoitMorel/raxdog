@@ -37,9 +37,15 @@ class RaxmlCommand:
         print("Sites : " + str(self.sites))
         optim = (self.sites + 999) // 1000
         self.optimalThreadsNumber = 2 **(optim.bit_length() - 1)
-        self.prefix = os.path.basename(self.msaFile)
-        self.prefix = os.path.splitext(self.prefix)[0]
-        self.prefix = os.path.join(outputTreesPath, self.prefix)
+        tree = geneDict.get("gene.tree.file")
+        raxmlSuffix = ".raxml.bestTree"
+        if tree == None or not tree.endswith(raxmlSuffix):
+            raise Exception("Invalid input.sequence.file value : " + tree)
+        if geneDict.get("init.gene.tree") != "user":
+            raise Exception("Error: phyldog will ignore raxml tree because init.gene.tree is not set to user")
+        self.prefix = tree[:-len(raxmlSuffix)]
+        print("prefix: " + self.prefix)
+        
 
     def execute(self):
         """
