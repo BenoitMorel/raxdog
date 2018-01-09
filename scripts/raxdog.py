@@ -8,7 +8,7 @@ import dirutils
 import shutil
 import phyldogOptions as opt
 
-def buildRaxmlCommands(geneDicts, outputTreesPath):
+def buildRaxmlCommands(geneDicts, outputTreesPath, threadsNumber):
     """
     Parse all the gene options files in optionsPath
     and return a list of raxml commands to execute
@@ -17,7 +17,7 @@ def buildRaxmlCommands(geneDicts, outputTreesPath):
     for geneDict in geneDicts.values():
         if geneDict.get(const.PREPROC_TREE_MODE) == "raxml":
             command = raxmlCommand.RaxmlCommand()
-            command.initFromOptionFile(geneDict, outputTreesPath)
+            command.initFromOptionFile(geneDict, outputTreesPath, threadsNumber)
             commands.append(command)
     return commands
 
@@ -28,8 +28,7 @@ def runRaxmlCommands(commands, threadsNumber):
     r = raxmlRunner.RaxmlCommandsRunner(threadsNumber)
     for command in commands:
         r.addJob(command)
-        print("r.addJob " + str(command.getThreads()))
-        #command.execute(threadsNumber)
+        #print("r.addJob " + str(command.getThreads()))
     r.run()
 
 def raxdog(generalOptionsFile, outputPath, threadsNumber):
@@ -43,11 +42,11 @@ def raxdog(generalOptionsFile, outputPath, threadsNumber):
     phyldogOutputPath = os.path.join(outputPath, "phyldogOutputs")
     os.makedirs(phyldogOutputPath)
     # build raxml commands
-    raxmlCommands = buildRaxmlCommands(options.getGeneDicts(), outputTreesPath)
+    raxmlCommands = buildRaxmlCommands(options.getGeneDicts(), outputTreesPath, threadsNumber)
     # execute raxml commands
     runRaxmlCommands(raxmlCommands, threadsNumber)
     # execute phyldog
-    os.chdir(phyldogOutputPath)
+    #os.chdir(phyldogOutputPath)
     #phyldogRunner.runPhyldog(generalOptionsFile, threadsNumber)
 
 

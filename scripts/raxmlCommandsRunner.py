@@ -63,10 +63,14 @@ class RaxmlCommandsRunner:
 
 
     def run(self):
+        print("Starting multi raxml...") 
+        begin = time.time()
         self._jobs.sort(key=raxmlCommand.commandKey, reverse=True)
         self.runAllPossibleJobs()
         while(not self.allJobsEnded()):
             time.sleep(0.05)
+        end = time.time()
+        print("End of multi raxml (" + str(end - begin) + "s)") 
 
     def allJobsEnded(self):
         if (self.hasNextJob()):
@@ -75,10 +79,4 @@ class RaxmlCommandsRunner:
             if f.running():
                 return False
         return True
-
-#runner = RaxmlCommandsRunner(4)
-#runner.addJob(Job(8, 4)) # 2 sec on 4 threads
-#runner.addJob(Job(8, 2)) # 4 sec on 2 threads
-#runner.addJob(Job(16, 2)) # 8 sec on 2 threads
-#runner.run() #should last 10 sec
 

@@ -25,7 +25,7 @@ class RaxmlCommand:
                     self.sites += (len(line.replace(" ", "")) - 1)
         self.sites //= self.nodes
 
-    def initFromOptionFile(self, geneDict, outputTreesPath):
+    def initFromOptionFile(self, geneDict, outputTreesPath, maxThreads):
         """
         Load all parameters from an optionFile
         (optionFile is a string)
@@ -34,17 +34,17 @@ class RaxmlCommand:
         self.model = "GTR"
         self.msaFile = geneDict["input.sequence.file"]
         self._parseFastaDimensions(self.msaFile)
-        print("Sites : " + str(self.sites))
+        #print("Sites : " + str(self.sites))
         optim = (self.sites + 999) // 1000
-        self.optimalThreadsNumber = 2 **(optim.bit_length() - 1)
+        self.optimalThreadsNumber = min(maxThreads, 2 **(optim.bit_length() - 1))
         tree = geneDict.get("gene.tree.file")
         raxmlSuffix = ".raxml.bestTree"
         if tree == None or not tree.endswith(raxmlSuffix):
-            raise Exception("Invalid input.sequence.file value : " + tree)
+            raise Exception("Invalid gene.tree.file value : " + tree)
         if geneDict.get("init.gene.tree") != "user":
             raise Exception("Error: phyldog will ignore raxml tree because init.gene.tree is not set to user")
         self.prefix = tree[:-len(raxmlSuffix)]
-        print("prefix: " + self.prefix)
+        #print("prefix: " + self.prefix)
         
 
     def execute(self):
@@ -61,7 +61,7 @@ class RaxmlCommand:
         command.append(str(self.optimalThreadsNumber))
         command.append("--prefix")
         command.append(self.prefix)
-        print("Executing " + str(command))
+        #print("Executing " + str(command))
         subprocess.check_call(command)
 
     def getThreads(self):
