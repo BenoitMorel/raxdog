@@ -4,7 +4,7 @@ import shutil
 
 outputPath = "/home/morelbt/github/raxdog/results/dataexample/"
 optionsFile = "/home/morelbt/github/raxdog/data/DataExample/OptionFiles/GeneralOptions.txt"
-threadsNumber = 8
+threadsNumber = 4
 try: 
   shutil.rmtree(outputPath) 
 except:

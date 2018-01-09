@@ -61,8 +61,9 @@ class RaxmlCommand:
         command.append(str(self.optimalThreadsNumber))
         command.append("--prefix")
         command.append(self.prefix)
-        #print("Executing " + str(command))
-        subprocess.check_call(command)
+        print("Executing " + str(command) + "\n")
+        FNULL = open(os.devnull, 'w')
+        subprocess.check_call(command, stdout = FNULL)
 
     def getThreads(self):
         return self.optimalThreadsNumber
