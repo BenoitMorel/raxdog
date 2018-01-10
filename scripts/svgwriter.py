@@ -1,4 +1,5 @@
 
+import random
 
 class SVGWriter:
   def __init__(self, filename):
@@ -9,9 +10,10 @@ class SVGWriter:
     if (width < 0 or height < 0):
       print("Warning: trying to draw a svg rectangle with negative width or height")
       return
+    color = hex(random.randrange(0, 16777216))[2:]
     self.f.write("  <rect x=\"" + str(x) + "\" y=\"" + str(y) + "\" ")
     self.f.write("height=\"" + str(height) + "\" width=\"" + str(width) + "\" ")
-    self.f.write("style=\"stroke:#ff0000; fill: #0000ff\"/>\n")
+    self.f.write("style=\"fill: #"+ color + "\"/>\n")
     pass
 
 
@@ -19,3 +21,8 @@ class SVGWriter:
     self.f.write("</svg>\n")
 
 
+#plop = SVGWriter("results/dataexample/multi-raxml.svg")
+#plop.drawRec(0, 0, 100, 100)
+#plop.drawRec(100, 0, 100, 100)
+##plop.drawRec(0, 100, 200, 100)
+#plop.close()
