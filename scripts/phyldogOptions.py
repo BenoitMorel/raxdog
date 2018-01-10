@@ -56,10 +56,11 @@ class PhyldogOptions:
     
     def __init__(self, generalOptionsFile):
         self.generalDict = parseDico(generalOptionsFile)
-        optionsPath = self.generalDict["OPT"]
-        for optionFile in os.listdir(optionsPath):
-            fullPath = os.path.join(optionsPath, optionFile)
-            self.dicts[fullPath] = parseDico(fullPath)
+        genelistFile = self.generalDict.get("genelist.file")
+        with open(genelistFile) as f:
+          for line in f.readlines():
+            geneOptionFile = line.split(":")[0]
+            self.dicts[geneOptionFile] = parseDico(geneOptionFile)
 
     def getGeneralDict(self):
         return self.generalDict

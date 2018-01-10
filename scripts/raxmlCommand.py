@@ -47,6 +47,7 @@ class RaxmlCommand:
         optim = (self.sites + 999) // 1000
         self.optimalThreadsNumber = min(maxThreads, 2 **(optim.bit_length() - 1))
         tree = geneDict.get("gene.tree.file")
+        print("TREE " + tree)
         raxmlSuffix = ".raxml.bestTree"
         if tree == None or not tree.endswith(raxmlSuffix):
             raise Exception("Invalid gene.tree.file value : " + tree)

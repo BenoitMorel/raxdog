@@ -7,6 +7,7 @@ import phyldogRunner
 import dirutils
 import shutil
 import phyldogOptions as opt
+import fileinput
 
 def buildRaxmlCommands(geneDicts, outputTreesPath, threadsNumber):
     """
@@ -30,23 +31,67 @@ def runRaxmlCommands(commands, threadsNumber, svgOutput):
         r.addJob(command)
     r.run(svgOutput)
 
-def raxdog(generalOptionsFile, outputPath, threadsNumber):
+def replacePath(oldOptionsPath, newOptionsPath, fileName):
+  with fileinput.FileInput(fileName, inplace=True, backup='.bak') as file:
+    for line in file:
+      print(line.replace(oldOptionsPath, newOptionsPath), end='')
+
+def updateResultPath(outputPath, fileName):
+  with fileinput.FileInput(fileName, inplace=True, backup='.bak') as file:
+    for line in file:
+      if (line.startswith("RESULT=")):
+        print("RESULT=" + outputPath)
+      else:
+        print(line, end='')
+
+def replacePathInOptions(outputPath, oldOptionsPath, newOptionsPath):
+    oldGeneralOptionsFile = os.path.join(oldOptionsPath, "GeneralOptions.txt")
+    newGeneralOptionsFile = os.path.join(newOptionsPath, "GeneralOptions.txt")
+    
+    oldOptions = opt.PhyldogOptions(oldGeneralOptionsFile)
+    oldGeneralDict = oldOptions.getGeneralDict()
+    genelistFile = oldGeneralDict.get("genelist.file")
+    # update general options file
+    replacePath(oldOptionsPath, newOptionsPath, newGeneralOptionsFile)
+    replacePath(oldOptionsPath, newOptionsPath, genelistFile)
+    updateResultPath(outputPath, newGeneralOptionsFile)
+    # update genes options files
+    with open(genelistFile) as f:
+      for line in f.readlines():
+        geneOptionFile = line.split(":")[0]
+        updateResultPath(outputPath, geneOptionFile)
+
+
+def raxdog(optionsPath, outputPath, threadsNumber):
     """
     Whole raxdog pipeline
     """
     os.makedirs(outputPath)
+
+    # duplicate options files and update paths
+    newOptionsPath = os.path.join(outputPath, "OptionsFiles")
+    shutil.copytree(optionsPath, newOptionsPath)
+    replacePathInOptions(outputPath, optionsPath, newOptionsPath) 
+
+
+    # create directoies
+    generalOptionsFile = os.path.join(newOptionsPath, "GeneralOptions.txt")
     outputTreesPath = os.path.join(outputPath, "RaxmlTrees")
     os.makedirs(outputTreesPath)
     options = opt.PhyldogOptions(generalOptionsFile)
     phyldogOutputPath = os.path.join(outputPath, "phyldogOutputs")
     os.makedirs(phyldogOutputPath)
     svgOutput = os.path.join(outputPath, "multi-raxml.svg")
+
     # build raxml commands
     raxmlCommands = buildRaxmlCommands(options.getGeneDicts(), outputTreesPath, threadsNumber)
+    
     # execute raxml commands
     runRaxmlCommands(raxmlCommands, threadsNumber, svgOutput)
+    
     # execute phyldog
     #os.chdir(phyldogOutputPath)
+    
     #phyldogRunner.runPhyldog(generalOptionsFile, threadsNumber)
 
 
