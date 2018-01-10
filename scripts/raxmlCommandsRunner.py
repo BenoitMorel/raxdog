@@ -36,7 +36,7 @@ class RaxmlCommandsRunner:
     def jobEnded(self, job):
         print("job ended " + str(job.threadIndex) + " "  + str(job.getThreads()))
         self._remainingThreads += job.getThreads()
-        self._svgWriter.drawRec(100 * job.threadIndex, job.startTime - self._startTime, 100 * job.getThreads(), job.endTime - job.startTime)
+        self._svgWriter.drawRec(100 * job.threadIndex, job.startTime - self._startTime, 100 * job.getThreads(), job.endTime - job.startTime, job.gene)
         print("Free " + str(job.getThreads()) + " threads. Remaining: " + str(self._remainingThreads))
         self.runAllPossibleJobs(job.threadIndex)
 

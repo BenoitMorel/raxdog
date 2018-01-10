@@ -15,6 +15,7 @@ class RaxmlCommand:
     prefix = ""  
     sites = 0
     optimalThreadsNumber = 1
+    gene = ""
 
     # running 
     startTime = 0
@@ -41,6 +42,7 @@ class RaxmlCommand:
         self.model = "GTR"
         self.msaFile = geneDict["input.sequence.file"]
         self._parseFastaDimensions(self.msaFile)
+        self.gene = geneDict["DATA"]
         #print("Sites : " + str(self.sites))
         optim = (self.sites + 999) // 1000
         self.optimalThreadsNumber = min(maxThreads, 2 **(optim.bit_length() - 1))
