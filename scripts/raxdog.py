@@ -72,12 +72,14 @@ def raxdog(optionsPath, outputPath, threadsNumber):
       pass
 
     # duplicate options files and update paths
+    print("Duplicating option paths...")
     newOptionsPath = os.path.join(outputPath, "OptionFiles")
     shutil.copytree(optionsPath, newOptionsPath)
     replacePathInOptions(outputPath, optionsPath, newOptionsPath) 
 
 
     # create directoies
+    print("Creating directories...")
     generalOptionsFile = os.path.join(newOptionsPath, "GeneralOptions.txt")
     outputTreesPath = os.path.join(outputPath, "RaxmlTrees")
     os.makedirs(outputTreesPath)
@@ -87,12 +89,15 @@ def raxdog(optionsPath, outputPath, threadsNumber):
     svgOutput = os.path.join(outputPath, "multi-raxml.svg")
 
     # build raxml commands
+    print("Building raxml commands...")
     raxmlCommands = buildRaxmlCommands(options.getGeneDicts(), outputTreesPath, threadsNumber)
     
+    print("Running raxml commands...")
     # execute raxml commands
     runRaxmlCommands(raxmlCommands, threadsNumber, svgOutput)
     
     # execute phyldog
+    # print("Running phyldog...")
     #os.chdir(phyldogOutputPath)
     
     #phyldogRunner.runPhyldog(generalOptionsFile, threadsNumber)
