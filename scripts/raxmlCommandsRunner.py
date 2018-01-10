@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 import sys
 import raxmlCommand
+import svgwriter
 
 class Notifier:
     _raxmlCommandsRunner = 0
@@ -22,6 +23,10 @@ class RaxmlCommandsRunner:
     _nextJobIndex = 0
     _remainingThreads = 0
     _futures = []
+    # debug members
+    _svgWriter = None
+    _startTime = 0
+
     def __init__(self,totalAvailableThreads):
         self._totalAvailableThreads = totalAvailableThreads
         self._executor = ThreadPoolExecutor()
@@ -29,9 +34,11 @@ class RaxmlCommandsRunner:
         self._nextJobIndex = 0
 
     def jobEnded(self, job):
+        print("job ended " + str(job.threadIndex) + " "  + str(job.getThreads()))
         self._remainingThreads += job.getThreads()
+        self._svgWriter.drawRec(100 * job.threadIndex, job.startTime - self._startTime, 100 * job.getThreads(), job.endTime - job.startTime)
         print("Free " + str(job.getThreads()) + " threads. Remaining: " + str(self._remainingThreads))
-        self.runAllPossibleJobs()
+        self.runAllPossibleJobs(job.threadIndex)
 
     def addJob(self, job):
         self._jobs.append(job)
@@ -48,28 +55,35 @@ class RaxmlCommandsRunner:
     def canRunNextJob(self):
         return self.hasNextJob() and self.getNextJob().getThreads() <= self._remainingThreads
         
-    def runJob(self, job):
+    def runJob(self, job, threadIndex):
         print("Allocate " + str(job.getThreads()) + " threads")
         self._remainingThreads -= job.getThreads()
+        job.threadIndex = threadIndex
         f = self._executor.submit(job.execute)
         notifier = Notifier(self, job)
         f.add_done_callback(notifier.notify)
         self._futures.append(f)
         self.popJob()
 
-    def runAllPossibleJobs(self):
+    def runAllPossibleJobs(self, threadIndex):
         while (self.canRunNextJob()):
-            self.runJob(self.getNextJob())
+          job = self.getNextJob()
+          self.runJob(job, threadIndex)
+          threadIndex += job.optimalThreadsNumber
 
 
-    def run(self):
-        print("Starting multi raxml...") 
+
+    def run(self, svgOutput):
+        print("Starting multi raxml...")
+        self._startTime = time.time()
+        self._svgWriter = svgwriter.SVGWriter(svgOutput)
         begin = time.time()
         self._jobs.sort(key=raxmlCommand.commandKey, reverse=True)
-        self.runAllPossibleJobs()
+        self.runAllPossibleJobs(0)
         while(not self.allJobsEnded()):
             time.sleep(0.05)
         end = time.time()
+        self._svgWriter.close()
         print("End of multi raxml (" + str(end - begin) + "s)") 
 
     def allJobsEnded(self):

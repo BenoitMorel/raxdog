@@ -2,17 +2,24 @@ import raxdogconstants as const;
 import os;
 import subprocess;
 import phyldogOptions as opt
+import time
 
 def commandKey(command):
     print("WARNING : dangerous magic number here (todobenoit)")
     return command.getThreads() * 10000000 + command.getExecutionTime() 
 
 class RaxmlCommand:
+    # command 
     msaFile = "" # path to the msa
     model = ""   # substitution model
     prefix = ""  
     sites = 0
     optimalThreadsNumber = 1
+
+    # running 
+    startTime = 0
+    endTime = 0
+    threadIndex = 0
 
     def _parseFastaDimensions(self, fastaFile):
         self.sites = 0
@@ -51,6 +58,7 @@ class RaxmlCommand:
         """
         Run a raxml command on the current instance
         """
+        self.startTime = time.time()
         command = []
         command.append(const.RAXML_EXEC)
         command.append("--msa")
@@ -61,9 +69,12 @@ class RaxmlCommand:
         command.append(str(self.optimalThreadsNumber))
         command.append("--prefix")
         command.append(self.prefix)
+        #command.append("--site-repeats")
+        #command.append("on")
         print("Executing " + str(command) + "\n")
         FNULL = open(os.devnull, 'w')
         subprocess.check_call(command, stdout = FNULL)
+        self.endTime = time.time()
 
     def getThreads(self):
         return self.optimalThreadsNumber

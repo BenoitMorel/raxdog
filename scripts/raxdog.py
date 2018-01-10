@@ -21,15 +21,14 @@ def buildRaxmlCommands(geneDicts, outputTreesPath, threadsNumber):
             commands.append(command)
     return commands
 
-def runRaxmlCommands(commands, threadsNumber):
+def runRaxmlCommands(commands, threadsNumber, svgOutput):
     """
     Run concurrently one raxml instance per command
     """
     r = raxmlRunner.RaxmlCommandsRunner(threadsNumber)
     for command in commands:
         r.addJob(command)
-        #print("r.addJob " + str(command.getThreads()))
-    r.run()
+    r.run(svgOutput)
 
 def raxdog(generalOptionsFile, outputPath, threadsNumber):
     """
@@ -41,10 +40,11 @@ def raxdog(generalOptionsFile, outputPath, threadsNumber):
     options = opt.PhyldogOptions(generalOptionsFile)
     phyldogOutputPath = os.path.join(outputPath, "phyldogOutputs")
     os.makedirs(phyldogOutputPath)
+    svgOutput = os.path.join(outputPath, "multi-raxml.svg")
     # build raxml commands
     raxmlCommands = buildRaxmlCommands(options.getGeneDicts(), outputTreesPath, threadsNumber)
     # execute raxml commands
-    runRaxmlCommands(raxmlCommands, threadsNumber)
+    runRaxmlCommands(raxmlCommands, threadsNumber, svgOutput)
     # execute phyldog
     #os.chdir(phyldogOutputPath)
     #phyldogRunner.runPhyldog(generalOptionsFile, threadsNumber)
