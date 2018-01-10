@@ -40,7 +40,7 @@ def updateResultPath(outputPath, fileName):
   with fileinput.FileInput(fileName, inplace=True, backup='.bak') as file:
     for line in file:
       if (line.startswith("RESULT=")):
-        print("RESULT=" + outputPath)
+        print("RESULT=" + outputPath + "/")
       else:
         print(line, end='')
 
@@ -48,9 +48,9 @@ def replacePathInOptions(outputPath, oldOptionsPath, newOptionsPath):
     oldGeneralOptionsFile = os.path.join(oldOptionsPath, "GeneralOptions.txt")
     newGeneralOptionsFile = os.path.join(newOptionsPath, "GeneralOptions.txt")
     
-    oldOptions = opt.PhyldogOptions(oldGeneralOptionsFile)
-    oldGeneralDict = oldOptions.getGeneralDict()
-    genelistFile = oldGeneralDict.get("genelist.file")
+    newOptions = opt.PhyldogOptions(newGeneralOptionsFile)
+    newGeneralDict = newOptions.getGeneralDict()
+    genelistFile = newGeneralDict.get("genelist.file")
     # update general options file
     replacePath(oldOptionsPath, newOptionsPath, newGeneralOptionsFile)
     replacePath(oldOptionsPath, newOptionsPath, genelistFile)
@@ -66,10 +66,13 @@ def raxdog(optionsPath, outputPath, threadsNumber):
     """
     Whole raxdog pipeline
     """
-    os.makedirs(outputPath)
+    try:
+      os.makedirs(outputPath)
+    except:
+      pass
 
     # duplicate options files and update paths
-    newOptionsPath = os.path.join(outputPath, "OptionsFiles")
+    newOptionsPath = os.path.join(outputPath, "OptionFiles")
     shutil.copytree(optionsPath, newOptionsPath)
     replacePathInOptions(outputPath, optionsPath, newOptionsPath) 
 
