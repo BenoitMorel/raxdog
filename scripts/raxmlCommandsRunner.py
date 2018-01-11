@@ -17,21 +17,16 @@ class Notifier:
 
 
 class RaxmlCommandsRunner:
-    _totalAvailableThreads = 1
-    _executor = 1 
-    _jobs = []
-    _nextJobIndex = 0
-    _remainingThreads = 0
-    _futures = []
-    # debug members
-    _svgWriter = None
-    _startTime = 0
-
     def __init__(self,totalAvailableThreads):
         self._totalAvailableThreads = totalAvailableThreads
-        self._executor = ThreadPoolExecutor()
+        self._executor = ThreadPoolExecutor(totalAvailableThreads)
+        self._jobs = []
+        self._nextJobIndex = 0
+        self._futures = []
         self._remainingThreads = totalAvailableThreads
         self._nextJobIndex = 0
+        self._svgWriter = None
+        self._startTime = 0
 
     def jobEnded(self, job):
         print("job ended " + str(job.threadIndex) + " "  + str(job.getThreads()))

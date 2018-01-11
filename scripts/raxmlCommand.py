@@ -9,18 +9,18 @@ def commandKey(command):
     return command.getThreads() * 10000000 + command.getExecutionTime() 
 
 class RaxmlCommand:
-    # command 
-    msaFile = "" # path to the msa
-    model = ""   # substitution model
-    prefix = ""  
-    sites = 0
-    optimalThreadsNumber = 1
-    gene = ""
-
-    # running 
-    startTime = 0
-    endTime = 0
-    threadIndex = 0
+    def __init__(self):
+        # command 
+        self.msaFile = "" # path to the msa
+        self.model = ""   # substitution model
+        self.prefix = ""  
+        self.sites = 0
+        self.optimalThreadsNumber = 1
+        self.gene = ""
+        # running 
+        self.startTime = 0
+        self.endTime = 0
+        self.threadIndex = 0
 
     def _parseFastaDimensions(self, fastaFile):
         self.sites = 0
@@ -86,9 +86,6 @@ class RaxmlCommand:
         return self.sites * self.nodes
 
 class DebugCommand:
-    _threads = 1
-    _executionTime = 0
-
     def __init__(self, executionTime, threads):
         self._threads = threads
         self._executionTime = executionTime

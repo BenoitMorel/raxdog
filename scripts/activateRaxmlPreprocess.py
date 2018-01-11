@@ -9,7 +9,7 @@ def activateRaxmlPreprocess(optionsPath):
     with open(os.path.join(optionsPath, optionFile), "a") as f:
       print("write")
       f.write("\ninit.gene.tree=user")
-      f.write("\ngene.tree.file=$(RESULT)$(DATA).raxml.bestTree")
+      f.write("\ngene.tree.file=$(RESULT)/RaxmlTrees/$(DATA).raxml.bestTree")
       f.write("\npreprocessing.mode=raxml\n")
 
 print(sys.argv[1])

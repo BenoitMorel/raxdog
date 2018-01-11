@@ -32,9 +32,16 @@ def runRaxmlCommands(commands, threadsNumber, svgOutput):
     r.run(svgOutput)
 
 def replacePath(oldOptionsPath, newOptionsPath, fileName):
+  ok = False
   with fileinput.FileInput(fileName, inplace=True, backup='.bak') as file:
     for line in file:
-      print(line.replace(oldOptionsPath, newOptionsPath), end='')
+      if (oldOptionsPath in line):
+        print(line.replace(oldOptionsPath, newOptionsPath), end='')
+        ok = True
+      else:
+        print(line, end='')
+  if (not ok):
+    raise Exception("Could not find string" + oldOptionsPath + " in " + fileName)
 
 def updateResultPath(outputPath, fileName):
   with fileinput.FileInput(fileName, inplace=True, backup='.bak') as file:
@@ -48,11 +55,12 @@ def replacePathInOptions(outputPath, oldOptionsPath, newOptionsPath):
     oldGeneralOptionsFile = os.path.join(oldOptionsPath, "GeneralOptions.txt")
     newGeneralOptionsFile = os.path.join(newOptionsPath, "GeneralOptions.txt")
     
+    # update general options file
+    replacePath(oldOptionsPath, newOptionsPath, newGeneralOptionsFile)
     newOptions = opt.PhyldogOptions(newGeneralOptionsFile)
     newGeneralDict = newOptions.getGeneralDict()
     genelistFile = newGeneralDict.get("genelist.file")
-    # update general options file
-    replacePath(oldOptionsPath, newOptionsPath, newGeneralOptionsFile)
+    print("genelistFile: " + genelistFile)
     replacePath(oldOptionsPath, newOptionsPath, genelistFile)
     updateResultPath(outputPath, newGeneralOptionsFile)
     # update genes options files
@@ -75,6 +83,7 @@ def raxdog(optionsPath, outputPath, threadsNumber):
     print("Duplicating option paths...")
     newOptionsPath = os.path.join(outputPath, "OptionFiles")
     shutil.copytree(optionsPath, newOptionsPath)
+    print("Editing option paths...")
     replacePathInOptions(outputPath, optionsPath, newOptionsPath) 
 
 

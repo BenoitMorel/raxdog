@@ -51,16 +51,20 @@ def parseDico(optionFile):
 
 
 class PhyldogOptions:
-    dicts = {} # dict of dict. 
-    generalDict = {} # dict
     
     def __init__(self, generalOptionsFile):
+        self.dicts = {} # dict of dict. 
+        self.generalDict = {} # dict
+        print("INIT OPTIONS " + generalOptionsFile)
+        print(len(self.dicts))
         self.generalDict = parseDico(generalOptionsFile)
         genelistFile = self.generalDict.get("genelist.file")
+        print(  "gene list " + genelistFile)
         with open(genelistFile) as f:
           for line in f.readlines():
             geneOptionFile = line.split(":")[0]
             self.dicts[geneOptionFile] = parseDico(geneOptionFile)
+        print(len(self.dicts))
 
     def getGeneralDict(self):
         return self.generalDict
