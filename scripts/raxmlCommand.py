@@ -63,20 +63,30 @@ class RaxmlCommand:
         """
         self.startTime = time.time()
         command = []
+        # todobenoit: do not hardcode per node cores number  
+        nodesNumber = (self.optimalThreadsNumber - 1) // 8 + 1
+        threadsNumber = min(self.optimalThreadsNumber, 8)
+        if (nodesNumber > 1):
+          command.append("mpirun")
+          command.append("-np")
+          command.append(str(nodesNumber))
         command.append(const.RAXML_EXEC)
         command.append("--msa")
         command.append(self.msaFile)
         command.append("--model")
         command.append(self.model)
         command.append("--threads")
-        command.append(str(self.optimalThreadsNumber))
+        command.append(str(threadsNumber))
         command.append("--prefix")
         command.append(self.prefix)
         command.append("--site-repeats")
         command.append("on")
+        for param in command:
+          print(param, end=' ')
+        print("")
         print("Executing " + str(command) + "\n")
         FNULL = open(os.devnull, 'w')
-        subprocess.check_call(command, stdout = FNULL)
+        subprocess.check_call(command)
         self.endTime = time.time()
 
     def getThreads(self):
